@@ -42,8 +42,52 @@ def universal_hash(a_array, b, m, string):
     res= ((sum + b) % primo) % m
     return res
 
-# Hay que elegir b y el arreglo de as al azar. b va entre 0 y 16, y el arreglo de as va entre 1 y 16
+# Hay que elegir b y el arreglo de a's al azar. b va entre 0 y 16, y el arreglo de a's va entre 1 y 16
 # con eso se obtiene una función de hash universal
 
 #def calculate_m(epsilon):
 #    m = 1.44 * np.log2(epsilon)
+def CrearFiltro(m,k,file):
+    #crear un arreglo M de m bits
+    M=bitarray(m)
+    #inicializarlos en 0
+    M.setall(0)
+
+    #crear k funciones de hash
+
+    #para cada elemento x del archivo PBN.csv calcular y_i=h_i(x) y modificar el arreglo M[y_i]=1
+    #for element in file
+    return 
+
+#busca name en el CSV de PBNF.csv
+def buscar(name):
+    #read csv, and split on "," the line
+    csv_file = csv.reader(open('Popular-Baby-Names-Final.csv', "r"), delimiter=",")
+
+    #loop through the csv list
+    for row in csv_file:
+        #print(row[0])
+        # Si el elemento existe, se imprime lo siguiente
+        if name == row[0]:
+            #exito
+            print('Existe el elemento')
+    #termino
+    print(".")
+
+def FunFiltro():
+    #verifica si el hash de un valor pasa el filtro o no
+    return
+
+#Valores->valores que se buscarán
+#Filtro->booleano indica si la busqueda es con o sin filtro
+#N->Numero de busquedas
+def BuscarValores(Valores,Filtro,N):
+    #para cada valor de Valores
+    for element in Valores:
+        if Filtro:
+            if FunFiltro():
+                #buscar
+        else:
+            #buscar
+
+    return
