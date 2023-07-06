@@ -17,25 +17,20 @@ k=1
 #tamaño de tabla para hash
 m=1
 #primo para el hashing
-#primo
-
+primo = 29
+#epsilon: probabilidad de falsos positivos
+epsilon=0.1
+# Se define el número de elementos que se meten al filtro
+N = 1
 #-----------------------------------------------------------------------------#
 
 # Se lee el archivo csv
 df = pd.read_csv('Popular-Baby-Names-Final.csv')
 
-# Se obtiene el mayor largo de nombre, que es 15
-max = df['Name'].str.len().max()
-print('El mayor largo de nombre es: ', max)
+#Se quitan los valores nulos del dataset
+df = df.dropna()
 
-#Se obtienen las caracteristicas del archivo csv
-print(df.describe())
-# Por lo tanto, el primo elegido para la función de hash será 17
-primo = 17
-
-# Se define el número de búsquedas que se harán
-#N = 
-
+#Univeral_hash: función de hash universal
 def universal_hash(a_array, b, m, string):
     sum = int(0)
     for i in range(len(string)):
@@ -67,7 +62,7 @@ def initialize():
 #initialize()
 
 #def calculate_m(epsilon):
-#    m = 1.44 * np.log2(epsilon)
+#    m = -1.44 * np.log2(epsilon) * N
 
 def CrearFiltro(m,k,file):
     #crear un arreglo M de m bits
@@ -93,6 +88,8 @@ def buscar(name):
         if name == row[0]:
             #exito
             print('Existe el elemento')
+        else:
+            print('No existe el elemento')
     #termino
     print(".")
 
