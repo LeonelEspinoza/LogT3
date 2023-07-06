@@ -9,4 +9,13 @@ Cuando se inserta un nuevo elemento a nuestro universo U, se aplica cada una de 
 
 Luego, cuando buscamos un elemento *y*, aplicamos el **filtro de Bloom**: calculamos *H[i]\(y)* con *i* en *[1,k]*. Si cada una de las funciones de hash retorna 1, entonces buscamos el elemento en la base de datos. Si al menos una de las funciones de hash retorna 0, entonces podemos decir con seguridad que el elemento no se encuentra en la base de datos.  
 
+## ¿Cómo ejecutar el programa?
+Primero, se deben instalar las dependencias del programa. Para esto, se debe ejecutar el siguiente comando en la terminal:
+```
+pip install -r requirements.txt
+```
 
+Luego, para ejecutar el programa, basta con ejecutar el siguiente comando en la terminal:
+```
+python main.py
+```
