@@ -3,6 +3,23 @@ import sys
 import bitarray
 import pandas as pd
 import numpy as np
+import random
+
+#-----------------------------------------------------------------------------#
+
+#VARIABLES GLOBALES
+#arreglo para los arreglos de a's
+A=[]
+#arreglos de b's
+B=[]
+#cantidad de funciones de hash
+k=1
+#tamaño de tabla para hash
+m=1
+#primo para el hashing
+#primo
+
+#-----------------------------------------------------------------------------#
 
 # Se lee el archivo csv
 df = pd.read_csv('Popular-Baby-Names-Final.csv')
@@ -19,21 +36,6 @@ primo = 17
 # Se define el número de búsquedas que se harán
 #N = 
 
-# Nombre en mayúsculas a quien se desea buscar (se pasa desde la shell)
-name = input('¿Qué nombre desea buscar?\n')
-
-#read csv, and split on "," the line
-csv_file = csv.reader(open('Popular-Baby-Names-Final.csv', "r"), delimiter=",")
-
-
-#loop through the csv list
-for row in csv_file:
-    #print(row[0])
-    # Si el elemento existe, se imprime lo siguiente
-    if name == row[0]:
-        print('Existe el elemento')
-print(".")
-
 def universal_hash(a_array, b, m, string):
     sum = int(0)
     for i in range(len(string)):
@@ -45,8 +47,28 @@ def universal_hash(a_array, b, m, string):
 # Hay que elegir b y el arreglo de a's al azar. b va entre 0 y 16, y el arreglo de a's va entre 1 y 16
 # con eso se obtiene una función de hash universal
 
+def initialize():
+    #setear k arreglos de a's y b's   
+    j=0
+    while j<k:
+        print("j=",j)
+        a=np.arange(16)
+        i=0
+        while i<16:
+            a[i]=random.randint(1,16)
+            i+=1
+
+        A.append(a)
+        print("A=",a)
+
+        B.append(random.randint(0,16))
+        print("b=",B[j])
+        j+=1
+#initialize()
+
 #def calculate_m(epsilon):
 #    m = 1.44 * np.log2(epsilon)
+
 def CrearFiltro(m,k,file):
     #crear un arreglo M de m bits
     M=bitarray(m)
@@ -74,20 +96,21 @@ def buscar(name):
     #termino
     print(".")
 
-def FunFiltro():
-    #verifica si el hash de un valor pasa el filtro o no
+def FunFiltro(valor):
+    for _ in range(k): 
+        universal_hash(A,b,m,valor)
     return
 
 #Valores->valores que se buscarán
 #Filtro->booleano indica si la busqueda es con o sin filtro
-#N->Numero de busquedas
+#N->Numero de busquedas (tamaño de Valores)
 def BuscarValores(Valores,Filtro,N):
-    #para cada valor de Valores
+    #para cada valor de Valores O(N)
     for element in Valores:
         if Filtro:
-            if FunFiltro():
-                #buscar
+            if FunFiltro(element):
+                buscar(element)
         else:
-            #buscar
+            buscar(element)
 
     return
