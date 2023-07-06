@@ -16,6 +16,8 @@ B=[]
 k=1
 #tamaño de tabla para hash
 m=1
+#Tabla de Hash
+M=bitarray(m)
 #primo para el hashing
 primo = 29
 #epsilon: probabilidad de falsos positivos
@@ -32,6 +34,13 @@ df = df.dropna()
 
 #Univeral_hash: función de hash universal
 def universal_hash(a_array, b, m, string):
+#Se obtienen las caracteristicas del archivo csv
+print(df.describe())
+# Por lo tanto, el primo elegido para la función de hash será 17
+primo = 17
+
+
+def universal_hash(a_array, b, string):
     sum = int(0)
     for i in range(len(string)):
         #Se obtiene el número UNICODE de cada letra del string y se le resta 65 para que queden entre 0 y 25
@@ -42,39 +51,49 @@ def universal_hash(a_array, b, m, string):
 # Hay que elegir b y el arreglo de a's al azar. b va entre 0 y 16, y el arreglo de a's va entre 1 y 16
 # con eso se obtiene una función de hash universal
 
-def initialize():
+#inicializar A[] y B[] 
+def initialize_hash():
+    #crear un arreglo M de m bits
+    M=bitarray(m)
+
+    #inicializarlos en 0
+    M.setall(0)
+
+    #setear k funciones de hash
     #setear k arreglos de a's y b's   
     j=0
     while j<k:
         print("j=",j)
-        a=np.arange(16)
+        a=np.arange(primo-1)
         i=0
         while i<16:
-            a[i]=random.randint(1,16)
+            a[i]=random.randint(1,primo-1)
             i+=1
-
         A.append(a)
-        print("A=",a)
-
-        B.append(random.randint(0,16))
-        print("b=",B[j])
+        #print("A=",a)
+        B.append(random.randint(0,primo-1))
+        #print("b=",B[j])
         j+=1
-#initialize()
+    print("A,B listo")
+
+    #leer el csv
+    csv_file = csv.reader(open('Popular-Baby-Names-Final.csv', "r"), delimiter=",")
+    #para cada nombre en el csv
+    for row in csv_file:
+        #aplicar las k funciones de hash y marcar M adecuadamente
+        i=0
+        while i<k:
+            j=universal_hash(A[i],B[i],m,row[0])
+            M[j]=1
+            i+=1
+    print("M marcado")
+    print(M)
+
+#initialize_hash()
 
 #def calculate_m(epsilon):
 #    m = -1.44 * np.log2(epsilon) * N
 
-def CrearFiltro(m,k,file):
-    #crear un arreglo M de m bits
-    M=bitarray(m)
-    #inicializarlos en 0
-    M.setall(0)
-
-    #crear k funciones de hash
-
-    #para cada elemento x del archivo PBN.csv calcular y_i=h_i(x) y modificar el arreglo M[y_i]=1
-    #for element in file
-    return 
 
 #busca name en el CSV de PBNF.csv
 def buscar(name):
