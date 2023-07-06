@@ -19,11 +19,13 @@ m=1
 #Tabla de Hash
 M=bitarray(m)
 #primo para el hashing
-primo = 29
+primo = 1000000007
 #epsilon: probabilidad de falsos positivos
 epsilon=0.1
 # Se define el número de elementos que se meten al filtro
 N = 1
+# Maximo largo de nombre
+max_len = 0
 #-----------------------------------------------------------------------------#
 
 # Se lee el archivo csv
@@ -32,14 +34,13 @@ df = pd.read_csv('Popular-Baby-Names-Final.csv')
 #Se quitan los valores nulos del dataset
 df = df.dropna()
 
-#Univeral_hash: función de hash universal
-def universal_hash(a_array, b, m, string):
+#Se obtiene el largo del nombre más largo
+max_len = df['Name'].str.len().max()
+
 #Se obtienen las caracteristicas del archivo csv
 print(df.describe())
-# Por lo tanto, el primo elegido para la función de hash será 17
-primo = 17
 
-
+#Universal_hash: función de hash universal
 def universal_hash(a_array, b, string):
     sum = int(0)
     for i in range(len(string)):
@@ -64,9 +65,10 @@ def initialize_hash():
     j=0
     while j<k:
         print("j=",j)
-        a=np.arange(primo-1)
+        a=np.arange(max_len-1)
         i=0
-        while i<16:
+        #Se llena el arreglo de a's con valores aleatorios entre 1 y primo-1
+        while i<max_len:
             a[i]=random.randint(1,primo-1)
             i+=1
         A.append(a)
