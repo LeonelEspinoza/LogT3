@@ -4,6 +4,7 @@ import bitarray
 import pandas as pd
 import numpy as np
 import random
+from timeit import default_timer as timer
 
 #-----------------------------------------------------------------------------#
 
@@ -36,9 +37,6 @@ df = df.dropna()
 
 #Se obtiene el largo del nombre más largo
 max_len = df['Name'].str.len().max()
-
-#Se obtienen las caracteristicas del archivo csv
-print(df.describe())
 
 #Universal_hash: función de hash universal
 def universal_hash(a_array, b, string):
@@ -132,3 +130,13 @@ def BuscarValores(Valores,Filtro,N):
             buscar(element)
 
     return
+
+#########################################################################
+#---------------------------MAIN----------------------------------------#
+start = timer()
+
+print(23*2.3)
+
+end = timer()
+print(end - start)
+#########################################################################
