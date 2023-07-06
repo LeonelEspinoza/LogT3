@@ -30,18 +30,6 @@ max_len = 0
 TasasDeError=[]
 #-----------------------------------------------------------------------------#
 
-# Se lee el archivo csv
-df = pd.read_csv('Popular-Baby-Names-Final.csv')
-
-#Se quitan los valores nulos del dataset
-df = df.dropna()
-
-#Se obtiene el largo del nombre más largo
-max_len = df['Name'].str.len().max()
-
-#Se obtiene el número de elementos en el dataset
-N = df['Name'].count()
-
 #Universal_hash: función de hash universal
 def universal_hash(a_array, b, string):
     sum = int(0)
@@ -54,11 +42,8 @@ def universal_hash(a_array, b, string):
 # Hay que elegir b y el arreglo de a's al azar. b va entre 0 y 16, y el arreglo de a's va entre 1 y 16
 # con eso se obtiene una función de hash universal
 
-#inicializar A[] y B[] 
+#inicializar A[], B[] y marcar M 
 def initialize_hash():
-    #crear un arreglo M de m bits
-    M=bitarray(m)
-
     #inicializarlos en 0
     M.setall(0)
 
@@ -99,7 +84,7 @@ def initialize_hash():
 #    m = -1.44 * np.log2(epsilon) * N
 
 
-#busca name en el CSV de PBNF.csv
+#busca name en el CSV de PBNF.csv True si el valor existe, False ~
 def buscar(name):
     #read csv, and split on "," the line
     csv_file = csv.reader(open('Popular-Baby-Names-Final.csv', "r"), delimiter=",")
@@ -123,7 +108,7 @@ def Filtro(valor):
     return True
 
 #Valores->valores que se buscarán
-#Filtro->booleano indica si la busqueda es con o sin filtro
+#conFiltro->booleano indica si la busqueda es con o sin filtro
 #N->Numero de busquedas (tamaño de Valores)
 def BuscarValores(ArrValores,conFiltro):
     #iniciar temporizdor
@@ -158,11 +143,22 @@ def generarCSV(nombre):
     df=pd.DataFrame(data, columns = ['col1','col2','col3','col4'])
     df.to_csv(nombre+'.csv')
 
-#el 50% seran busquedas exitosas y las demas seran busquedas fallidas
 
 #########################################################################
 #---------------------------MAIN----------------------------------------#
 #Acordarse de reiniciar arreglos A y B después de cada corrida
+#A.clear() debería servir
+#el 50% seran busquedas exitosas y las demas seran busquedas fallidas
+
+# Se lee el archivo csv
+df = pd.read_csv('Popular-Baby-Names-Final.csv')
+#Se quitan los valores nulos del dataset
+df = df.dropna()
+#Se obtiene el largo del nombre más largo
+max_len = df['Name'].str.len().max()
+#Se obtiene el número de elementos en el dataset
+N = df['Name'].count()
+
 start = timer()
 
 print(23*2.3)
