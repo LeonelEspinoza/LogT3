@@ -112,19 +112,23 @@ def buscar(name):
     #termino
     print(".")
 
-def FunFiltro(valor):
-    for _ in range(k): 
-        universal_hash(A,b,m,valor)
-    return
+def Filtro(valor):
+    i=0
+    while i<k:
+        j=universal_hash(A[i],B[i],valor)
+        if M[j]==0:
+            return False
+    return True
 
 #Valores->valores que se buscarán
 #Filtro->booleano indica si la busqueda es con o sin filtro
 #N->Numero de busquedas (tamaño de Valores)
-def BuscarValores(Valores,Filtro,N):
-    #para cada valor de Valores O(N)
-    for element in Valores:
-        if Filtro:
-            if FunFiltro(element):
+def BuscarValores(ArrValores,bool):
+    #iniciar temporizdor
+    #para cada valor del arreglo de Valores O(N)
+    for element in ArrValores:
+        if not bool:
+            if Filtro(element):
                 buscar(element)
         else:
             buscar(element)
