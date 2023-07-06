@@ -24,7 +24,7 @@ primo = 1000000007
 #epsilon: probabilidad de falsos positivos
 epsilon=0.1
 # Se define el número de elementos que se meten al filtro
-N = 1
+N = 0
 # Maximo largo de nombre
 max_len = 0
 #-----------------------------------------------------------------------------#
@@ -37,6 +37,9 @@ df = df.dropna()
 
 #Se obtiene el largo del nombre más largo
 max_len = df['Name'].str.len().max()
+
+#Se obtiene el número de elementos en el dataset
+N = df['Name'].count()
 
 #Universal_hash: función de hash universal
 def universal_hash(a_array, b, string):
@@ -137,6 +140,7 @@ def BuscarValores(ArrValores,bool):
 
 #########################################################################
 #---------------------------MAIN----------------------------------------#
+#Acordarse de reiniciar arreglos A y B después de cada corrida
 start = timer()
 
 print(23*2.3)
