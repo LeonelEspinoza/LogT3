@@ -6,7 +6,6 @@ import numpy as np
 import random
 
 #-----------------------------------------------------------------------------#
-
 #VARIABLES GLOBALES
 #arreglo para los arreglos de a's
 A=[]
@@ -26,6 +25,8 @@ epsilon=0.1
 N = 1
 # Maximo largo de nombre
 max_len = 0
+# Tasas de error
+TasasDeError=[]
 #-----------------------------------------------------------------------------#
 
 # Se lee el archivo csv
@@ -101,15 +102,13 @@ def buscar(name):
 
     #loop through the csv list
     for row in csv_file:
-        #print(row[0])
-        # Si el elemento existe, se imprime lo siguiente
+        # Si el elemento existe, retorna True
         if name == row[0]:
-            #exito
-            print('Existe el elemento')
+            #Existe el elemento
+            return True
         else:
-            print('No existe el elemento')
-    #termino
-    print(".")
+            #No existe el elemento
+            return False
 
 def Filtro(valor):
     i=0
@@ -122,15 +121,37 @@ def Filtro(valor):
 #Valores->valores que se buscarán
 #Filtro->booleano indica si la busqueda es con o sin filtro
 #N->Numero de busquedas (tamaño de Valores)
-def BuscarValores(ArrValores,bool):
+def BuscarValores(ArrValores,conFiltro):
     #iniciar temporizdor
     #para cada valor del arreglo de Valores O(N)
+    error=0
+    total=0
     for element in ArrValores:
-        if not bool:
+        if conFiltro:
             if Filtro(element):
-                buscar(element)
+                if not buscar(element):
+                    error+=1
+                total+=1
         else:
             buscar(element)
     #finalizar temporizador
-    #guardar tiempo ejecución en un csv
+    #guardar tiempo de ejecución
+
+    #guardar tasa de error
+    TasasDeError.append(error/total) 
+
     return
+
+
+def generarCSV(nombre):
+    #guardar tiempo ejecución en un csv
+    data={
+        'Número exp':[],
+        'Tiempo sin filtro':[],
+        'Tiempo con filtro':[],
+        'Tasa de error':[],
+    }
+    df=pd.DataFrame(data, columns = ['col1','col2','col3','col4'])
+    df.to_csv(nombre+'.csv')
+
+#el 50% seran busquedas exitosas y las demas seran busquedas fallidas
