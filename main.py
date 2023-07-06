@@ -13,9 +13,9 @@ A=[]
 #arreglos de b's
 B=[]
 #cantidad de funciones de hash
-k=20
+k=2
 #tamaño de tabla para hash
-m=100
+m=10
 #Tabla de Hash
 M=bitarray.bitarray(m)
 #primo para el hashing
@@ -29,8 +29,8 @@ max_len = 0
 
 
 # Parámetros para definir la cantidad de exitos y fracasos reales
-NExito = 100
-NFracaso = 100
+NExito = 2
+NFracaso = 8
 #-----------------------------------------------------------------------------#
 
 
@@ -44,8 +44,8 @@ def universal_hash(a_array, b, string):
         #    print(len(string), len(a_array))
 
 
-        #Se obtiene el número UNICODE de cada letra del string y se le resta 65 para que queden entre 0 y 25
-        sum += int( (ord(string[i])-65) * a_array[i])
+        #Se obtiene el número UNICODE de cada letra del string
+        sum += int( (ord(string[i])) * a_array[i])
     res= ((sum + b) % primo) % m
     return res
 
@@ -98,17 +98,20 @@ def initialize_hash():
 #busca name en el CSV de PBNF.csv True si el valor existe, False ~
 def buscar(name):
     #read csv, and split on "," the line
-    csv_file = csv.reader(open('Popular-Baby-Names-Final.csv', "r"), delimiter=",")
 
+    csv_file = pd.read_csv('Popular-Baby-Names-Final.csv')
+    #Se quitan los valores nulos del dataset
+    #csv_file = csv_file.dropna()
+    csv_file_len = csv_file['Name'].count()
+    i =0
     #loop through the csv list
-    for row in csv_file:
+    while i<csv_file_len:
         # Si el elemento existe, retorna True
-        if name == row[0]:
+        if name == csv_file['Name'][i]:
             #Existe el elemento
             return True
-        else:
-            #No existe el elemento
-            return False
+        i+=1
+    return False
 
 def Filtro(valor):
     i=0
@@ -133,10 +136,10 @@ def BuscarValores(ArrValores,conFiltro):
             if Filtro(element):
                 if not buscar(element):
                     error+=1
-                total+=1
+
         else:
             buscar(element)
-            total+=1
+        total+=1
     #finalizar temporizador
     end = timer()
     #guardar datos
