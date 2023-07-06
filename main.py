@@ -13,9 +13,9 @@ A=[]
 #arreglos de b's
 B=[]
 #cantidad de funciones de hash
-k=2
+k=10
 #tamaño de tabla para hash
-m=10
+m=1000
 #Tabla de Hash
 M=bitarray.bitarray(m)
 #primo para el hashing
@@ -23,10 +23,16 @@ primo = 1000000007
 #epsilon: probabilidad de falsos positivos
 epsilon=0.1
 # Se define el número de elementos que se meten al filtro
-N = 100
+#N = 100
 # Maximo largo de nombre
 max_len = 0
 
+# Tasas de error
+TasasDeError=[]
+TasasDeErrorConFiltro=[]
+# Tiempos de ejecución
+TiemposSinFiltro=[]
+TiemposConFiltro=[]
 
 # Parámetros para definir la cantidad de exitos y fracasos reales
 NExito = 2
@@ -42,7 +48,6 @@ def universal_hash(a_array, b, string):
         # aqui hay un bug
         #if len(string) > len(a_array):
         #    print(len(string), len(a_array))
-
 
         #Se obtiene el número UNICODE de cada letra del string
         sum += int( (ord(string[i])) * a_array[i])
@@ -73,7 +78,6 @@ def initialize_hash():
         B.append(random.randint(0,primo-1))
         #print("b=",B[j])
         j+=1
-    #print("A,B listo")
 
     #leer el csv
     csv_file = csv.reader(open('Popular-Baby-Names-Final.csv', "r"), delimiter=",")
@@ -82,14 +86,9 @@ def initialize_hash():
         #aplicar las k funciones de hash y marcar M adecuadamente
         i=0
         while i<k:
-            #j=universal_hash(A[i],B[i],m,row[0])
             j=universal_hash(A[i],B[i],row[0])
             M[j]=1
             i+=1
-    #print("M marcado")
-    #print(M)
-
-#initialize_hash()
 
 #def calculate_m(epsilon):
 #    m = -1.44 * np.log2(epsilon) * N
@@ -100,8 +99,6 @@ def buscar(name):
     #read csv, and split on "," the line
 
     csv_file = pd.read_csv('Popular-Baby-Names-Final.csv')
-    #Se quitan los valores nulos del dataset
-    #csv_file = csv_file.dropna()
     csv_file_len = csv_file['Name'].count()
     i =0
     #loop through the csv list
@@ -113,6 +110,7 @@ def buscar(name):
         i+=1
     return False
 
+#Verifica que el hash del valor calze con algun hash de la tabla
 def Filtro(valor):
     i=0
     while i<k:
@@ -122,9 +120,8 @@ def Filtro(valor):
         i+=1
     return True
 
-#Valores->valores que se buscarán
+#ArrValores->valores que se buscarán
 #conFiltro->booleano indica si la busqueda es con o sin filtro
-#N->Numero de busquedas (tamaño de Valores)
 def BuscarValores(ArrValores,conFiltro):
     #iniciar temporizador
     start = timer()
@@ -138,7 +135,8 @@ def BuscarValores(ArrValores,conFiltro):
                     error+=1
 
         else:
-            buscar(element)
+            if not buscar(element):
+                error+=1
         total+=1
     #finalizar temporizador
     end = timer()
@@ -151,29 +149,19 @@ def BuscarValores(ArrValores,conFiltro):
         TiemposSinFiltro.append(end-start)
     return
 
-# Tasas de error
-TasasDeError=[]
-TasasDeErrorConFiltro=[]
-# Tiempos de ejecución
-TiemposSinFiltro=[]
-TiemposConFiltro=[]
-
+#genera un csv con titulo nombre con los campos: 
+# 'Tiempo sin filtro','Tasa de error','Tiempo con filtro','Tasa de error con filtro'
 def generarCSV(nombre):
     #guardar tiempo ejecución en un csv
     data={
-        #'Número exp':[],
-        'Tiempo sin filtro':[],
-        'Tasa de error':[],
-        'Tiempo con filtro':[],
-        'Tasa de error con filtro':[],
+        #'Número exp':Nexp,
+        'Tiempo sin filtro':TiemposSinFiltro,
+        'Tasa de error':TasasDeError,
+        'Tiempo con filtro':TiemposConFiltro,
+        'Tasa de error con filtro':TasasDeErrorConFiltro,
     }
-    data['Tiempo sin filtro']=TiemposSinFiltro
-    data['Tasa de error']=TasasDeError
-    data['Tiempo con filtro']=TiemposConFiltro
-    data['Tasa de error con filtro']=TasasDeErrorConFiltro
     df=pd.DataFrame(data, columns = ['Tiempo sin filtro','Tasa de error','Tiempo con filtro','Tasa de error con filtro'])
     df.to_csv(nombre+'.csv')
-
 
 # Crea un arreglo de nExito y nFracaso elementos 
 def create_Arreglo_Search(nExito,nFracasos):
@@ -229,7 +217,6 @@ N = df['Name'].count()
 ArrValoresSearch = create_Arreglo_Search(NExito , NFracaso)
 
 initialize_hash()
-
 
 start = timer()
 #Hacemos la busqueda sin filtro
