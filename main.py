@@ -28,19 +28,33 @@ epsilon=0.1
 df2 = pd.read_csv('Film-Names.csv')
 max_len = df2['0'].str.len().max()
 
+#Número de Experimento
+Nexp=[]
 # Tasas de error
-TasasDeError=[]
-TasasDeErrorConFiltro=[]
+Errores=[]
+ErroresConFiltro=[]
 # Tiempos de ejecución
 TiemposSinFiltro=[]
 TiemposConFiltro=[]
 
-# Parámetros para definir la cantidad de exitos y fracasos reales
-Ntotal=100
-NExito = int(Ntotal*0.7)
-NFracaso = Ntotal-NExito
-#-----------------------------------------------------------------------------#
+#Tamaños de las busquedas
+listN = []
+#Promedio Y Desviacion Estandar Tiempo sin Filtro
+PromTiempo = []
+DSTiempo = []
+#Promedio Y Desviacion Estandar Tiempo con Filtro
+PromTiempoFiltro = []
+DSTiempoFiltro = []
+#Promedio Y Desviacion Estandar Tasa de error o Falsos Positivos
+PromError = []
+DSError = []
 
+# Parámetros para definir la cantidad de exitos y fracasos reales
+#Ntotal=100
+#NExito = int(Ntotal*0.7)
+#NFracaso = Ntotal-NExito
+PExito = 0.7
+#-----------------------------------------------------------------------------#
 
 #Universal_hash: función de hash universal
 def universal_hash(a_array, b, string):
@@ -137,7 +151,6 @@ def BuscarValores(ArrValores,conFiltro):    #O(Ntotal)
     start = timer()
     #para cada valor del arreglo de Valores O(N)
     error=0
-    total=0
     for element in ArrValores:
         if conFiltro:
             if Filtro(element):
@@ -147,15 +160,15 @@ def BuscarValores(ArrValores,conFiltro):    #O(Ntotal)
         else:
             if not buscarCSV(element):
                 error+=1
-        total+=1
+        
     #finalizar temporizador
     end = timer()
     #guardar datos
     if conFiltro:
-        TasasDeErrorConFiltro.append(error/total)
+        ErroresConFiltro.append(error)
         TiemposConFiltro.append(end-start)
     else:
-        TasasDeError.append(error/total)
+        Errores.append(error)
         TiemposSinFiltro.append(end-start)
     return
 
@@ -166,11 +179,31 @@ def generarCSV(nombre):
     data={
         #'Número exp':Nexp,
         'Tiempo sin filtro':TiemposSinFiltro,
-        'Tasa de error':TasasDeError,
+        'Cantidad de errores':Errores,
         'Tiempo con filtro':TiemposConFiltro,
-        'Tasa de error con filtro':TasasDeErrorConFiltro,
+        'Cantidad de errores con filtro':ErroresConFiltro,
     }
-    df=pd.DataFrame(data, columns = ['Tiempo sin filtro','Tasa de error','Tiempo con filtro','Tasa de error con filtro'])
+    df=pd.DataFrame(data, columns = ['Tiempo sin filtro','Cantidad de errores','Tiempo con filtro','Cantidad de errores con filtro'])
+    df.to_csv(nombre+'.csv')
+
+def generarCSV2(nombre):
+    data={
+        'N':listN,
+        'Promedio Tiempo sin Filtro' : PromTiempo,
+        'DS Tiempo sin Flitro' : DSTiempo,
+        'Promedio Tiempo con Filtro' : PromTiempoFiltro,
+        'DS Tiempo con Flitro' : DSTiempoFiltro,
+        'Promedio Cantidad de Errores' : PromError,
+        'DS Cantidad de Errores' : DSError,
+    }
+    df=pd.DataFrame(data, columns = ['N',
+                                    'Promedio Tiempo sin Filtro',
+                                    'DS Tiempo sin Flitro',
+                                    'Promedio Tiempo con Filtro',
+                                    'DS Tiempo con Flitro',
+                                    'Promedio Cantidad de Errores',
+                                    'DS Cantidad de Errores'
+                                    ])
     df.to_csv(nombre+'.csv')
 
 # Crea un arreglo de nExito y nFracaso elementos 
@@ -201,8 +234,25 @@ def create_Arreglo_Search(nExito,nFracasos):
     ArrValoresSearch = random.sample(ArrValoresSearch, len(ArrValoresSearch))
     return ArrValoresSearch
 
-# Ejecuta un experimento con Ntotal elementos a buscar
-def experimento(N,k,m):
+# Ejecuta un experimento con Ntotal elementos a buscar con y sin filtro
+def experimento(N):
+
+    Ntotal=N
+    NExito=int(Ntotal*PExito)
+    NFracaso=Ntotal-NExito
+    
+    #Crear un arreglo de valores con PExito porcentaje existente
+    ArrValoresSearch = create_Arreglo_Search(NExito , NFracaso)
+
+    #Inicializar el hash y marcar M
+    initialize_hash()
+
+    #Hacemos la busqueda sin filtro
+    BuscarValores(ArrValoresSearch,False)
+
+    #Hacemos la busqueda con filtro
+    BuscarValores(ArrValoresSearch,True)
+
     return
 
 
@@ -222,25 +272,25 @@ def experimento(N,k,m):
 #max_len = df2['0'].str.len().max()
 #Se obtiene el número de elementos en el dataset
 #N = df['Name'].count()
+N=10
+listN.append(N)
+i=0
+while(i<3):
+    experimento(N)
+    i+=1
 
+generarCSV("experimentos N=" + str(N))
 
-#print(",")
-ArrValoresSearch = create_Arreglo_Search(NExito , NFracaso)
-#print("Arr")
+PromTiempoFiltro.append(np.mean(TiemposConFiltro))
+DSTiempoFiltro.append(np.std(TiemposConFiltro))
 
-initialize_hash()
-#print("h")
+PromTiempo.append(np.mean(TiemposSinFiltro))
+DSTiempo.append(np.std(TiemposSinFiltro))
 
-#start = timer()
-#Hacemos la busqueda sin filtro
-BuscarValores(ArrValoresSearch,False)
+PromError.append(np.mean(ErroresConFiltro))
+DSError.append(np.std(ErroresConFiltro))
 
-#Hacemos la busqueda con filtro
-BuscarValores(ArrValoresSearch,True)
-#end = timer()
-#print("B")
-
-generarCSV('Resultados')
+generarCSV2('Resultados')
 #print("CSV")
 
 #print(end - start)
