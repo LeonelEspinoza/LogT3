@@ -149,6 +149,12 @@ def set_m(i):
     global m
     m=i
 
+def set_theoric():
+    global m
+    global k
+    k=int((-1)*np.log2(epsilon))
+    m=int(1.44 * k * n)
+
 #busca name en el .csv con PANDAS True si el valor existe, False ~
 def buscarPANDAS(name): #O(csv_len)
     csv_file = pd.read_csv('Popular-Baby-Names-Final.csv')
@@ -370,6 +376,7 @@ def experimentoFiltro():
 
 def experimentoK(N):
     clearEverything()
+    set_theoric()
 
     #se corre el experimento para k=1 hasta 10
     for i in range(1,10+1):
@@ -393,7 +400,8 @@ def experimentoK(N):
 
 def experimentoM(N):
     clearEverything()
-
+    set_theoric()
+    
     #se corre el experimento para m=3*10^5 hasta 6*10^5 en saltos de 0.5*10^5
     for i in np.linspace(3,6, num=7):
         i=int(i*(10**5))
@@ -420,9 +428,9 @@ def experimentoM(N):
 #---------------------------MAIN----------------------------------------#
 
 #start = timer()
-experimentoFiltro()
-#experimentoK(2**10)
-#experimentoM(100)
+#experimentoFiltro()
+experimentoK(2**12)
+experimentoM(2**12)
 #end = timer()
 #print(end-start)
 
