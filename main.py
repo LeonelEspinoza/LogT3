@@ -357,14 +357,14 @@ def experimentoFiltro():
         #generarCSV("Experimentos N="+str(N))
 
         #Guardamos los Promedios y descviaciones estandar
-        PromTiempoFiltro.append(np.mean(TiemposConFiltro))
-        DSTiempoFiltro.append(np.std(TiemposConFiltro))
+        PromTiempoFiltro.append(round(np.mean(TiemposConFiltro),4))
+        DSTiempoFiltro.append(round(np.std(TiemposConFiltro),4))
 
-        PromTiempo.append(np.mean(Tiempos))
-        DSTiempo.append(np.std(Tiempos))
+        PromTiempo.append(round(np.mean(Tiempos),4))
+        DSTiempo.append(round(np.std(Tiempos),4))
 
-        PromError.append(np.mean(FalsosPositivos))
-        DSError.append(np.std(FalsosPositivos))
+        PromError.append(round(np.mean(FalsosPositivos),4))
+        DSError.append(round(np.std(FalsosPositivos),4))
     #Una vez terminado creamos un 
     generarCSV2('Resultados Filtro')
 
