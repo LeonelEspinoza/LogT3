@@ -4,6 +4,7 @@ import bitarray
 import pandas as pd
 import numpy as np
 import random
+import matplotlib.pyplot as plt
 from timeit import default_timer as timer
 
 #-----------------------------------------------------------------------------#
@@ -13,9 +14,9 @@ A=[]
 #arreglos de b's
 B=[]
 #cantidad de funciones de hash
-k=100
+k=0
 #tamaño de tabla para hash
-m=1000
+m=0
 #Tabla de Hash
 M=bitarray.bitarray(m)
 #primo para el hashing
@@ -23,7 +24,9 @@ primo = 1000000007
 #epsilon: probabilidad de falsos positivos
 epsilon=0.1
 # Se define el número de elementos que se meten al filtro
-#N = 100
+df = pd.read_csv('Popular-Baby-Names-Final.csv')
+df = df.dropna()
+n = df['Name'].count()
 # Maximo largo de nombre
 df2 = pd.read_csv('Film-Names.csv')
 max_len = df2['0'].str.len().max()
@@ -74,7 +77,11 @@ def universal_hash(a_array, b, string):
 # con eso se obtiene una función de hash universal
 
 #inicializar A[], B[] y marcar M 
-def initialize_hash():  #O(k*csv_len)
+def initialize_hash(M):  #O(k*csv_len)
+
+    set_m_k(epsilon,n)
+
+    M=bitarray.bitarray(m)
 
     #inicializarlos en 0
     M.setall(0)
@@ -108,8 +115,10 @@ def initialize_hash():  #O(k*csv_len)
             M[j]=1
             i+=1
 
-#def calculate_m(epsilon):
-#    m = -1.44 * np.log2(epsilon) * N
+#Setea los valores de k y m según la probabilidad de falsos positivos buscada y la cantidad de elementos en el filtro basado en la teoría
+def set_m_k(epsilon,n):
+    k=(-1)*np.log2(epsilon)
+    m = 1.44 * k * n
 
 #busca name en el .csv con PANDAS True si el valor existe, False ~
 def buscarPANDAS(name): #O(csv_len)
@@ -186,6 +195,7 @@ def generarCSV(nombre):
     df=pd.DataFrame(data, columns = ['Tiempo sin filtro','Cantidad de errores','Tiempo con filtro','Cantidad de errores con filtro'])
     df.to_csv(nombre+'.csv')
 
+# 'N', 'Promedio Tiempo sin Filtro', 'DS Tiempo sin Flitro', 'Promedio Tiempo con Filtro', 'DS Tiempo con Flitro', 'Promedio Cantidad de Errores', 'DS Cantidad de Errores'
 def generarCSV2(nombre):
     data={
         'N':listN,
@@ -245,7 +255,7 @@ def experimento(N):
     ArrValoresSearch = create_Arreglo_Search(NExito , NFracaso)
 
     #Inicializar el hash y marcar M
-    initialize_hash()
+    initialize_hash(M)
 
     #Hacemos la busqueda sin filtro
     BuscarValores(ArrValoresSearch,False)
@@ -272,25 +282,28 @@ def experimento(N):
 #max_len = df2['0'].str.len().max()
 #Se obtiene el número de elementos en el dataset
 #N = df['Name'].count()
-N=10
-listN.append(N)
+#2^10-2^15
+#
+N=2**10
+#{
+#listN.append(N)
 i=0
-while(i<3):
+while(i<1):
     experimento(N)
     i+=1
 
 generarCSV("experimentos N=" + str(N))
 
-PromTiempoFiltro.append(np.mean(TiemposConFiltro))
-DSTiempoFiltro.append(np.std(TiemposConFiltro))
+#PromTiempoFiltro.append(np.mean(TiemposConFiltro))
+#DSTiempoFiltro.append(np.std(TiemposConFiltro))
 
-PromTiempo.append(np.mean(TiemposSinFiltro))
-DSTiempo.append(np.std(TiemposSinFiltro))
+#PromTiempo.append(np.mean(TiemposSinFiltro))
+#DSTiempo.append(np.std(TiemposSinFiltro))
 
-PromError.append(np.mean(ErroresConFiltro))
-DSError.append(np.std(ErroresConFiltro))
-
-generarCSV2('Resultados')
+#PromError.append(np.mean(ErroresConFiltro))
+#DSError.append(np.std(ErroresConFiltro))
+#}
+#generarCSV2('Resultados')
 #print("CSV")
 
 #print(end - start)
