@@ -13,7 +13,7 @@ A=[]
 #arreglos de b's
 B=[]
 #cantidad de funciones de hash
-k=10
+k=100
 #tamaño de tabla para hash
 m=1000
 #Tabla de Hash
@@ -25,7 +25,8 @@ epsilon=0.1
 # Se define el número de elementos que se meten al filtro
 #N = 100
 # Maximo largo de nombre
-max_len = 0
+df2 = pd.read_csv('Film-Names.csv')
+max_len = df2['0'].str.len().max()
 
 # Tasas de error
 TasasDeError=[]
@@ -35,8 +36,9 @@ TiemposSinFiltro=[]
 TiemposConFiltro=[]
 
 # Parámetros para definir la cantidad de exitos y fracasos reales
-NExito = 2
-NFracaso = 8
+Ntotal=100
+NExito = int(Ntotal*0.7)
+NFracaso = Ntotal-NExito
 #-----------------------------------------------------------------------------#
 
 
@@ -58,34 +60,36 @@ def universal_hash(a_array, b, string):
 # con eso se obtiene una función de hash universal
 
 #inicializar A[], B[] y marcar M 
-def initialize_hash():
+def initialize_hash():  #O(k*csv_len)
+
     #inicializarlos en 0
     M.setall(0)
+
+    #vaciar A y B
+    A.clear()
+    B.clear()
 
     #setear k funciones de hash
     #setear k arreglos de a's y b's   
     j=0
-    while j<k:
-        #print("j=",j)
+    while j<k: #O(k * max_len)
         a=np.arange(max_len)
         i=0
         #Se llena el arreglo de a's con valores aleatorios entre 1 y primo-1
-        while i<max_len:
+        while i<max_len: #O(max_len)
             a[i]=random.randint(1,primo-1)
             i+=1
         A.append(a)
-        #print("A=",a)
         B.append(random.randint(0,primo-1))
-        #print("b=",B[j])
         j+=1
 
     #leer el csv
     csv_file = csv.reader(open('Popular-Baby-Names-Final.csv', "r"), delimiter=",")
     #para cada nombre en el csv
-    for row in csv_file:
+    for row in csv_file: #O(csv_len * k)
         #aplicar las k funciones de hash y marcar M adecuadamente
         i=0
-        while i<k:
+        while i<k: #O(k)
             j=universal_hash(A[i],B[i],row[0])
             M[j]=1
             i+=1
@@ -93,11 +97,8 @@ def initialize_hash():
 #def calculate_m(epsilon):
 #    m = -1.44 * np.log2(epsilon) * N
 
-
-#busca name en el CSV de PBNF.csv True si el valor existe, False ~
-def buscar(name):
-    #read csv, and split on "," the line
-
+#busca name en el .csv con PANDAS True si el valor existe, False ~
+def buscarPANDAS(name): #O(csv_len)
     csv_file = pd.read_csv('Popular-Baby-Names-Final.csv')
     csv_file_len = csv_file['Name'].count()
     i =0
@@ -110,8 +111,17 @@ def buscar(name):
         i+=1
     return False
 
+#busca name en el .csv con CSV True si el valor existe, False ~
+def buscarCSV(name):    #O(csv_len)
+    csv_file = csv.reader(open('Popular-Baby-Names-Final.csv', "r"), delimiter=",")
+    #loop through the csv list
+    for row in csv_file:
+        if name == row[0]:
+            return True
+    return False
+
 #Verifica que el hash del valor calze con algun hash de la tabla
-def Filtro(valor):
+def Filtro(valor):  #O(k)
     i=0
     while i<k:
         j=universal_hash(A[i],B[i],valor)
@@ -122,7 +132,7 @@ def Filtro(valor):
 
 #ArrValores->valores que se buscarán
 #conFiltro->booleano indica si la busqueda es con o sin filtro
-def BuscarValores(ArrValores,conFiltro):
+def BuscarValores(ArrValores,conFiltro):    #O(Ntotal)
     #iniciar temporizador
     start = timer()
     #para cada valor del arreglo de Valores O(N)
@@ -131,11 +141,11 @@ def BuscarValores(ArrValores,conFiltro):
     for element in ArrValores:
         if conFiltro:
             if Filtro(element):
-                if not buscar(element):
+                if not buscarCSV(element):
                     error+=1
 
         else:
-            if not buscar(element):
+            if not buscarCSV(element):
                 error+=1
         total+=1
     #finalizar temporizador
@@ -191,41 +201,48 @@ def create_Arreglo_Search(nExito,nFracasos):
     ArrValoresSearch = random.sample(ArrValoresSearch, len(ArrValoresSearch))
     return ArrValoresSearch
 
-
-    
+# Ejecuta un experimento con Ntotal elementos a buscar
+def experimento(N,k,m):
+    return
 
 
 #########################################################################
 #---------------------------MAIN----------------------------------------#
 #Acordarse de reiniciar arreglos A y B después de cada corrida
 #A.clear() debería servir
-#el 50% seran busquedas exitosas y las demas seran busquedas fallidas
+#el 70% seran busquedas exitosas y las demas seran busquedas fallidas
 
 # Se lee el archivo csv
-df = pd.read_csv('Popular-Baby-Names-Final.csv')
+#df = pd.read_csv('Popular-Baby-Names-Final.csv')
 #Se quitan los valores nulos del dataset
-df = df.dropna()
+#df = df.dropna()
 #Se obtiene el largo del nombre más largo
-df2 = pd.read_csv('Film-Names.csv')
+#df2 = pd.read_csv('Film-Names.csv')
 
-max_len = df2['0'].str.len().max()
+#max_len = df2['0'].str.len().max()
 #Se obtiene el número de elementos en el dataset
-N = df['Name'].count()
+#N = df['Name'].count()
 
 
-
+#print(",")
 ArrValoresSearch = create_Arreglo_Search(NExito , NFracaso)
+#print("Arr")
 
 initialize_hash()
+#print("h")
 
-start = timer()
+#start = timer()
 #Hacemos la busqueda sin filtro
 BuscarValores(ArrValoresSearch,False)
 
 #Hacemos la busqueda con filtro
 BuscarValores(ArrValoresSearch,True)
+#end = timer()
+#print("B")
+
 generarCSV('Resultados')
-end = timer()
-print(end - start)
+#print("CSV")
+
+#print(end - start)
 #########################################################################
 
