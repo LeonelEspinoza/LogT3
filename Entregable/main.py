@@ -323,6 +323,7 @@ def experimentoBase(N):
     #Hacemos la busqueda sin filtro
     BuscarValores(ArrValoresSearch,False)
     print(',',end='',flush=True)
+
     #Hacemos la busqueda con filtro
     BuscarValores(ArrValoresSearch,True)
     print('.',end='',flush=True)
@@ -382,7 +383,7 @@ def experimentoK(N):
         set_k(i)
         print("\nk =",k)
         listK.append(k)
-        #repetimos el experimento 3 veces
+        #repetimos el experimento 5 veces
         for i in range(0,5):
             experimentoBase2(N)
         
@@ -408,7 +409,7 @@ def experimentoM(N):
         print("\nm =",m)
         listM.append(m)
 
-        #repetimos el experimento 3 veces
+        #repetimos el experimento 5 veces
         for i in range(0,5):
             experimentoBase2(N)
         
@@ -427,27 +428,10 @@ def experimentoM(N):
 #---------------------------MAIN----------------------------------------#
 
 #start = timer()
-#experimentoFiltro()
+experimentoFiltro()
 experimentoK(2**12)
 experimentoM(2**12)
 #end = timer()
 #print(end-start)
 
 #########################################################################
-
-#Acordarse de reiniciar arreglos A y B después de cada corrida
-#A.clear() debería servir
-#el 70% seran busquedas exitosas y las demas seran busquedas fallidas
-
-# Se lee el archivo csv
-#df = pd.read_csv('Popular-Baby-Names-Final.csv')
-#Se quitan los valores nulos del dataset
-#df = df.dropna()
-#Se obtiene el largo del nombre más largo
-#df2 = pd.read_csv('Film-Names.csv')
-
-#max_len = df2['0'].str.len().max()
-#Se obtiene el número de elementos en el dataset
-#N = df['Name'].count()
-#2^10-2^15
-#
